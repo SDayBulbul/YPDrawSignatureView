@@ -154,22 +154,29 @@ final public class YPDrawSignatureView: UIView {
     
     // Save the Signature as an UIImage
     public func getSignature(scale:CGFloat = 1) -> UIImage? {
-        if !doesContainSignature { return nil }
-        UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, scale)
-        self.strokeColor.setStroke()
-        self.path.stroke()
-        let signature = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return signature
-    }
+        if !doesContainSignature { return nil }
+        UIGraphicsBeginImageContextWithOptions(self.bounds.size, false, scale)
+        
+        let rect = CGRect(origin: CGPoint(x: 0, y: 0), size: self.bounds.size)
+        self.backgroundColor?.setFill()
+        UIRectFill(rect)
+        
+        self.strokeColor.setStroke()
+        self.path.stroke()
+        
+        let signature = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return signature
+    }
     
     // Save the Signature (cropped of outside white space) as a UIImage
     public func getCroppedSignature(scale:CGFloat = 1) -> UIImage? {
-        guard let fullRender = getSignature(scale:scale) else { return nil }
-        let bounds = self.scale(path.bounds.insetBy(dx: -strokeWidth/2, dy: -strokeWidth/2), byFactor: scale)
-        guard let imageRef = fullRender.cgImage?.cropping(to: bounds) else { return nil }
-        return UIImage(cgImage: imageRef)
-    }
+        guard let fullRender = getSignature(scale:1) else { return nil }
+        //let bounds = self.scale(path.bounds.insetBy(dx: -strokeWidth/2, dy: -strokeWidth/2), byFactor: scale)
+        //guard let imageRef = fullRender.cgImage?.cropping(to: bounds) else { return nil }
+        //return UIImage(cgImage: imageRef)
+        return fullRender
+    }
     
     
     fileprivate func scale(_ rect: CGRect, byFactor factor: CGFloat) -> CGRect
